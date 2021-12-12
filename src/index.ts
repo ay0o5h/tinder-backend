@@ -1,21 +1,22 @@
+import * as cors from "cors";
+import * as express from "express";
 import "reflect-metadata";
-import {createConnection} from "typeorm";
-import {User} from "./entity/User";
+import { createConnection } from "typeorm";
+
+
+
+const app = express();
+
+const port = process.env.PORT || 5000;
+
 
 createConnection().then(async connection => {
+    app.use(express.json());
+    app.use(cors());
+    // app.use("/v1", webv1);
+    // app.use("/dash/v1", dashv1);
+    // app.use(notFound);
+    app.listen(port, () => console.log(`Running on ${port}`));
 
-    console.log("Inserting a new user into the database...");
-    const user = new User();
-    user.firstName = "Timber";
-    user.lastName = "Saw";
-    user.age = 25;
-    await connection.manager.save(user);
-    console.log("Saved a new user with id: " + user.id);
-
-    console.log("Loading users from the database...");
-    const users = await connection.manager.find(User);
-    console.log("Loaded users: ", users);
-
-    console.log("Here you can setup and run express/koa/any other framework.");
 
 }).catch(error => console.log(error));
