@@ -1,7 +1,9 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Passion } from "./Passion";
+import { UserMatch } from "./UserMatch";
 
 @Entity()
-export class User {
+export class User extends BaseEntity {
 
     @PrimaryGeneratedColumn()
     id: number;
@@ -61,5 +63,14 @@ export class User {
     updatedAt: Date;
 
     // TODO: Make Relations
+
+    @ManyToMany((type) => Passion, passion => passion.users, {
+        cascade: true,
+    })
+    @JoinTable()
+    passions: Passion[];
+
+    @OneToMany((type) => UserMatch, (userMatch) => userMatch.user)
+    userMatch: UserMatch[];
 
 }

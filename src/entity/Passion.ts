@@ -1,7 +1,8 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, Entity, ManyToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { User } from "./User";
 
 @Entity()
-export class Passion {
+export class Passion extends BaseEntity {
 
     @PrimaryGeneratedColumn()
     id: number;
@@ -16,5 +17,7 @@ export class Passion {
     updatedAt: Date;
 
     // TODO: Make Relations
+    @ManyToMany((type) => User, user => user.passions)
+    users: User[];
 
 }

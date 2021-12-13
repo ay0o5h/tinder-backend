@@ -1,7 +1,8 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { User } from './User';
 
 @Entity()
-export class UserMatch {
+export class UserMatch extends BaseEntity {
 
     @PrimaryGeneratedColumn()
     id: number;
@@ -25,5 +26,8 @@ export class UserMatch {
     updatedAt: Date;
 
     // TODO: Make Relations
+    @ManyToOne((type) => User, (user) => user.userMatch)
+    user: User;
+
 
 }
