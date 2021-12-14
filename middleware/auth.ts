@@ -14,7 +14,7 @@ export default async (req, res, next) => {
         let payload: any;
         payload = jwt.verify(token, CONFIG.jwtUserSecret);
         // get user
-        let user = await User.findOne({ where: { id: payload.id, isActive: true } });
+        let user = await User.findOne({ where: { id: payload.id, active: true } });
         console.log({ user, payload });
 
 

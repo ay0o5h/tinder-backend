@@ -35,17 +35,29 @@ export default class Validate {
             presence: must,
             type: "string",
         },
+        bio: {
+            presence: false,
+            type: "string",
+        },
+        phone: {
+            presence: false,
+            type: "string",
+        },
+        fb_url: {
+            presence: false,
+            type: "string",
+        },
+        insta_url: {
+            presence: false,
+            type: "string",
+        },
     });
 
     static login = (must = true) => ({
         email: {
-            presence: false,
+            presence: must,
             type: "string",
             email: true,
-        },
-        username: {
-            presence: false,
-            type: "string",
         },
         password: {
             presence: must,
@@ -54,9 +66,10 @@ export default class Validate {
     });
 
     static forget = (must = true) => ({
-        phone: {
+        email: {
             presence: must,
             type: "string",
+            email: true,
         },
     });
 

@@ -17,4 +17,8 @@ route.post("/forget/password", UserController.forget);
 route.post("/verify/password", UserController.verifyPassword);
 route.use(auth);
 
+route.get("/profile", UserController.getProfile);
+route.put("/update", UserController.update);
+
+
 export default route;
