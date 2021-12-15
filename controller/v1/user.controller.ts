@@ -4,6 +4,7 @@ import * as jwt from "jsonwebtoken";
 import { Twilio } from "twilio";
 import * as validate from "validate.js";
 import CONFIG from "../../config";
+import { Passion } from "../../src/entity/Passion";
 import { User } from "../../src/entity/User";
 import PhoneFormat from "../../utility/phoneFormat.service";
 import { errRes, getOtp, okRes } from "../../utility/util.service";
@@ -266,28 +267,56 @@ export default class UserController {
         } catch (error) {
             return errRes(res, { error });
         }
-
-
-
-        // firstName: body.firstName,
-        // lastName: body.lastName,
-        // username: body.username,
-        // age: body.age,
-        // email: body.email,
-        // password: body.password,
-        // gender: body.gender,
-        // otp: body.otp,
-        // gender_Love: body.gender_Love
-
-
-
-
-
-
-
-
-
     }
+    static async addPassion(req, res): Promise<object> {
+
+        // let body = req.body;
+        // let id = body.passionId;
+        // try {
+        //     const passion = await Passion.findOne(req.body.id);
+        //     const user = await User.findOne(req.user.id);
+        //     user.passions.push(passion);
+        //     return okRes(res, {
+        //         status: "true",
+        //         message: "Intrest created successfully 🎆✨",
+        //     });
+        // } catch (err) {
+        //     console.log(err);
+        //     return errRes(res, " somethings wrong 🥴");
+        // }
 
 
+        // let passion = await Passion.findOne({ where: { id } });
+        // if (!passion) return errRes(res, `${id} is not exist`);
+        // const passion1 = new Passion();
+        // passion1.id = body.passionId;
+        // passion1.save();
+
+        // const user = new User();
+        // user.id = req.user.id;
+        // user.passions = [passion1];
+        // await user.save();
+
+        // return okRes(res, { user, passion1 });
+        const body = req.body;
+        // validate the req
+
+        if (!Array.isArray(body.passions) || body.passions.length < 1)
+            return errRes(res, "intrests must by array");
+        let passions = [];
+        for (const passion of body.passions) {
+
+            let p = await Passion.findOneOrFail(passion.id);
+            passions.push(p);
+        }
+        let user = await User.findOne({
+            where: { id: req.user.id },
+            relations: ["passions"],
+        });
+        user.passions = passions;
+
+        await user.save();
+
+        return okRes(res, { passions: user.passions });
+    }
 }

@@ -83,4 +83,16 @@ export default class Validate {
             type: "string",
         },
     });
+    static passion = (must = true) => ({
+        title: {
+            presence: must,
+            type: "string",
+        },
+    });
+    static music = (must = true) => ({
+        type: {
+            presence: must,
+            type: "string",
+        },
+    });
 }
