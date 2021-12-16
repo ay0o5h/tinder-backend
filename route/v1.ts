@@ -33,5 +33,9 @@ route.use(auth);
 route.get("/profile", UserController.getProfile);
 route.put("/update", UserController.update);
 route.post("/user/addPassion", UserController.addPassion)
+route.get("/music-favourit", UserController.getMusic)
+route.post("/music-favourit/add", UserController.addMusic)
+route.put("/music-favourit/edit/:id", UserController.editMusic)
+route.delete("/music-favourit/delete/:id", UserController.deleteMusic)
 
 export default route;

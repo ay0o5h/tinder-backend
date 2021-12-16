@@ -1,5 +1,6 @@
 import { BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { MusicCategory } from "./MusicCategory";
+import { User } from './User';
 
 @Entity()
 export class MusicFavourit extends BaseEntity {
@@ -20,6 +21,9 @@ export class MusicFavourit extends BaseEntity {
 
     @ManyToOne((type) => MusicCategory, (musicCat) => musicCat.musicFav)
     musicCat: MusicCategory;
+
+    @ManyToOne((type) => User, (user) => user.musicFav)
+    user: User;
 
 
 }

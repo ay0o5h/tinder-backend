@@ -4,6 +4,8 @@ import * as jwt from "jsonwebtoken";
 import { Twilio } from "twilio";
 import * as validate from "validate.js";
 import CONFIG from "../../config";
+import { MusicCategory } from "../../src/entity/MusicCategory";
+import { MusicFavourit } from "../../src/entity/MusicFavourit";
 import { Passion } from "../../src/entity/Passion";
 import { User } from "../../src/entity/User";
 import PhoneFormat from "../../utility/phoneFormat.service";
@@ -224,7 +226,15 @@ export default class UserController {
         return okRes(res, { msg: "All good" });
     }
     static async getProfile(req, res): Promise<object> {
-        let user = await User.findOne({ where: { id: req.user.id, isVerified: true } });
+        let user = await User.findOne({
+            where: { id: req.user.id, isVerified: true },
+            join: {
+                alias: "user",
+                leftJoinAndSelect: {
+                    musicFav: "user.musicFav",
+                },
+            },
+        });
         if (!user) return errRes(res, `the user is not exist or the account is deactive by the admin`);
         return okRes(res, { user });
     }
@@ -318,5 +328,54 @@ export default class UserController {
         await user.save();
 
         return okRes(res, { passions: user.passions });
+    }
+    static async getMusic(req, res): Promise<object> {
+        const musicCat = await MusicFavourit.find({ where: { user: req.user.id } });
+
+        return okRes(res, { musicCat });
+    }
+    static async addMusic(req, res): Promise<object> {
+
+        let body = req.body;
+        let notValid = validate(body, Validator.musicFav());
+        if (notValid) return errRes(res, notValid);
+
+        let musicCat = body.musicCat;
+        let musicFav = await MusicCategory.findOne({ where: { id: musicCat } });
+        if (!musicFav) return errRes(res, `${musicCat} is not exist`);
+
+        let data = await MusicFavourit.create({
+            link: body.link,
+            user: req.user.id,
+            musicCat: body.musicCat
+        })
+        await data.save();
+        return okRes(res, { data })
+    }
+    static async editMusic(req, res): Promise<object> {
+
+        let body = req.body;
+        let id = req.params.id;
+        let notValid = validate(body, Validator.musicFav(false));
+        if (notValid) return errRes(res, notValid);
+
+        let data;
+
+        try {
+            data = await await MusicFavourit.findOne({ where: { id, user: req.user.id } });
+            if (!data) return errRes(res, { msg: "not found" });
+            data.musicCat = body.musicCat;
+            data.link = body.link
+
+            await data.save();
+            return okRes(res, { data });
+        } catch (error) {
+            return errRes(res, { error });
+        }
+    }
+    static async deleteMusic(req, res): Promise<object> {
+        let id = req.params.id;
+        await MusicFavourit.delete(id);
+        return okRes(res, { msg: "deleted successfully" });
     }
 }

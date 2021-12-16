@@ -95,4 +95,14 @@ export default class Validate {
             type: "string",
         },
     });
+    static musicFav = (must = true) => ({
+        link: {
+            presence: must,
+            type: "string",
+        },
+        musicCat: {
+            presence: must,
+            type: "number",
+        },
+    });
 }

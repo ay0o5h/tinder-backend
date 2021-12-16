@@ -1,4 +1,5 @@
 import { BaseEntity, Column, CreateDateColumn, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { MusicFavourit } from "./MusicFavourit";
 import { Passion } from "./Passion";
 import { UserMatch } from "./UserMatch";
 
@@ -72,5 +73,7 @@ export class User extends BaseEntity {
 
     @OneToMany((type) => UserMatch, (userMatch) => userMatch.user)
     userMatch: UserMatch[];
+    @OneToMany((type) => MusicFavourit, (musicFav) => musicFav.user)
+    musicFav: MusicFavourit[];
 
 }
