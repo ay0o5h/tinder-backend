@@ -309,7 +309,6 @@ export default class UserController {
 
         // return okRes(res, { user, passion1 });
         const body = req.body;
-        // validate the req
 
         if (!Array.isArray(body.passions) || body.passions.length < 1)
             return errRes(res, "intrests must by array");
