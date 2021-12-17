@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import * as validate from "validate.js";
 import { MusicCategory } from "../../src/entity/MusicCategory";
 import { Passion } from "../../src/entity/Passion";
+import { User } from "../../src/entity/User";
 import { errRes, okRes } from "../../utility/util.service";
 import Validator from '../../utility/validation';
 export default class InterstedController {
@@ -100,6 +101,25 @@ export default class InterstedController {
         const id = req.params.id
         await MusicCategory.delete(id);
         return okRes(res, { msg: ' deleted succssfully' });
+    }
+    static async suggestions(req, res): Promise<object> {
+
+        const id = req.params.id
+        const body = req.body
+        let user = await User.find({
+            join: {
+                alias: "user",
+                leftJoinAndSelect: {
+                    musicFav: "user.musicFav",
+                    musicCat: "musicFav.musicCat",
+                    userPassion: "user.userPassion",
+                    passion: "userPassion.passion",
+
+                },
+            },
+        })
+
+        return okRes(res, { user });
     }
 
 }

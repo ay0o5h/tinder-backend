@@ -32,6 +32,8 @@ route.use(auth);
 
 route.get("/profile", UserController.getProfile);
 route.put("/update", UserController.update);
+route.get("/suggestions", InterstedController.suggestions)
+
 // passion of user
 route.get("/user-passion", UserController.getPassions)
 route.post("/user/addPassion", UserController.addPassion)
