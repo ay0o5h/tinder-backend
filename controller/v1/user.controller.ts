@@ -6,8 +6,8 @@ import * as validate from "validate.js";
 import CONFIG from "../../config";
 import { MusicCategory } from "../../src/entity/MusicCategory";
 import { MusicFavourit } from "../../src/entity/MusicFavourit";
-import { Passion } from "../../src/entity/Passion";
 import { User } from "../../src/entity/User";
+import { UserPassion } from "../../src/entity/UserPassion";
 import PhoneFormat from "../../utility/phoneFormat.service";
 import { errRes, getOtp, okRes } from "../../utility/util.service";
 import Validator from '../../utility/validation';
@@ -232,6 +232,7 @@ export default class UserController {
                 alias: "user",
                 leftJoinAndSelect: {
                     musicFav: "user.musicFav",
+                    userPassion: "user.userPassion"
                 },
             },
         });
@@ -278,55 +279,55 @@ export default class UserController {
             return errRes(res, { error });
         }
     }
+    static async getPassions(req, res): Promise<object> {
+        const user = await UserPassion.find({
+            where: { user: req.user.id },
+            join: {
+                alias: "userPassion",
+                leftJoinAndSelect: {
+                    passion: "userPassion.passion",
+                },
+            },
+        });
+
+        return okRes(res, { user });
+
+    }
     static async addPassion(req, res): Promise<object> {
-
-        // let body = req.body;
-        // let id = body.passionId;
-        // try {
-        //     const passion = await Passion.findOne(req.body.id);
-        //     const user = await User.findOne(req.user.id);
-        //     user.passions.push(passion);
-        //     return okRes(res, {
-        //         status: "true",
-        //         message: "Intrest created successfully 🎆✨",
-        //     });
-        // } catch (err) {
-        //     console.log(err);
-        //     return errRes(res, " somethings wrong 🥴");
-        // }
-
-
-        // let passion = await Passion.findOne({ where: { id } });
-        // if (!passion) return errRes(res, `${id} is not exist`);
-        // const passion1 = new Passion();
-        // passion1.id = body.passionId;
-        // passion1.save();
-
-        // const user = new User();
-        // user.id = req.user.id;
-        // user.passions = [passion1];
-        // await user.save();
-
-        // return okRes(res, { user, passion1 });
         const body = req.body;
 
         if (!Array.isArray(body.passions) || body.passions.length < 1)
-            return errRes(res, "intrests must by array");
-        let passions = [];
+            return errRes(res, "passions must by array");
+        let user
         for (const passion of body.passions) {
-
-            let p = await Passion.findOneOrFail(passion.id);
-            passions.push(p);
+            user = await UserPassion.create({
+                user: req.user.id,
+                passion: passion
+            });
+            await user.save();
         }
-        let user = await User.findOne({
-            where: { id: req.user.id },
-            relations: ["passions"],
-        });
-        user.passions = passions;
+        return okRes(res, { user });
+    }
+    static async editPassion(req, res): Promise<object> {
+        const body = req.body;
+        let id = req.params.id;
+        let user = await UserPassion.findOne({ id, user: req.user.id })
 
+
+        user.passion = body.passion
         await user.save();
 
-        return okRes(res, { passions: user.passions });
+        return okRes(res, { user });
+    }
+    static async deletePassion(req, res): Promise<object> {
+        const body = req.body;
+        let id = req.params.id;
+        await UserPassion.delete({ id, user: req.user.id })
+
+
+
+
+        return okRes(res, { msg: 'User deleted successfully' });
     }
     static async getMusic(req, res): Promise<object> {
         const musicCat = await MusicFavourit.find({ where: { user: req.user.id } });

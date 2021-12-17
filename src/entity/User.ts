@@ -2,6 +2,7 @@ import { BaseEntity, Column, CreateDateColumn, Entity, JoinTable, ManyToMany, On
 import { MusicFavourit } from "./MusicFavourit";
 import { Passion } from "./Passion";
 import { UserMatch } from "./UserMatch";
+import { UserPassion } from "./UserPassion";
 
 @Entity()
 export class User extends BaseEntity {
@@ -75,5 +76,9 @@ export class User extends BaseEntity {
     userMatch: UserMatch[];
     @OneToMany((type) => MusicFavourit, (musicFav) => musicFav.user)
     musicFav: MusicFavourit[];
+
+    @OneToMany((type) => UserPassion, (userPassion) => userPassion.user)
+    userPassion: UserPassion[];
+
 
 }

@@ -32,7 +32,12 @@ route.use(auth);
 
 route.get("/profile", UserController.getProfile);
 route.put("/update", UserController.update);
+// passion of user
+route.get("/user-passion", UserController.getPassions)
 route.post("/user/addPassion", UserController.addPassion)
+route.put("/user/editPassion/:id", UserController.editPassion)
+route.delete("/user/deletePassion/:id", UserController.deletePassion)
+// music of user
 route.get("/music-favourit", UserController.getMusic)
 route.post("/music-favourit/add", UserController.addMusic)
 route.put("/music-favourit/edit/:id", UserController.editMusic)
