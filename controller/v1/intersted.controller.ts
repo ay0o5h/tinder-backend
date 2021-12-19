@@ -103,10 +103,19 @@ export default class InterstedController {
         return okRes(res, { msg: ' deleted succssfully' });
     }
     static async suggestions(req, res): Promise<object> {
+        let userPassionArr = [];
+        let idGenderMatch = [];
+        let idMatchPassion = [];
+        let idMatchMusic = [];
+        let passionResults = [];
+        let userMusicArr = [];
+        let result;
+        let keys, values, uniqueArray;
+        let finalMatchUserArr = [];
+        let suggestUser = [];
 
-        const id = req.params.id
-        const body = req.body
-        let user = await User.find({
+
+        let users = await User.find({
             join: {
                 alias: "user",
                 leftJoinAndSelect: {
@@ -118,8 +127,63 @@ export default class InterstedController {
                 },
             },
         })
+        let user = await User.findOne({
+            where: { id: req.user.id },
+            join: {
+                alias: "user",
+                leftJoinAndSelect: {
+                    musicFav: "user.musicFav",
+                    musicCat: "musicFav.musicCat",
+                    userPassion: "user.userPassion",
+                    passion: "userPassion.passion",
 
-        return okRes(res, { user });
+                },
+            },
+        })
+        user.userPassion.map((u) => userPassionArr.push(u.passion.title));
+        user.musicFav.map((u) => userMusicArr.push(u.musicCat.type));
+
+        for (let i = 0; i < users.length; i++) {
+            if (users[i].id !== req.user.id) {
+                // check match gender
+                if (users[i].gender === user.gender_Love && users[i].gender_Love === user.gender) idGenderMatch.push(users[i].id);
+                // check match passion
+                users[i].userPassion.map((c) => {
+                    if (userPassionArr.includes(c.passion.title)) {
+                        idMatchPassion.push(users[i].id)
+                        result = idMatchPassion.reduce((acc, curr) => (acc[curr] = (acc[curr] || 0) + 1, acc), {});
+                        values = Object.keys(result).map(key => result[key]);
+                        keys = Object.keys(result).map(key => +key);
+                        for (var j = 0; j < keys.length; j++) {
+                            if (values[j] > 2) {
+                                passionResults.push(keys[j])
+                            }
+                        }
+                        uniqueArray = passionResults.filter(function (item, pos) {
+                            return passionResults.indexOf(item) == pos;
+                        })
+                    }
+                })
+                // check match music
+                users[i].musicFav.map((c) => {
+                    if (userMusicArr.includes(c.musicCat.type)) {
+                        idMatchMusic.push(users[i].id)
+                    }
+                })
+                if (idGenderMatch.includes(users[i].id) && uniqueArray.includes(users[i].id)
+                    && idMatchMusic.includes(users[i].id)) {
+                    finalMatchUserArr.push(users[i].id)
+                }
+            }
+        }
+        for (let x of finalMatchUserArr) {
+            let userfinal = await User.findOne({
+                where: { id: x }
+            })
+            suggestUser.push(userfinal)
+        }
+
+        return okRes(res, { suggestUser });
     }
 
 }
