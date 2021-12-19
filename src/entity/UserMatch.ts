@@ -14,10 +14,10 @@ export class UserMatch extends BaseEntity {
     user_send: number;
 
     @Column()
-    user_request: number;
+    user_receive: number;
 
-    @Column({ default: false })
-    status: boolean;
+    @Column({ default: null })
+    status: string;
 
     @CreateDateColumn()
     createdAt: Date;

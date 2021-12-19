@@ -105,4 +105,29 @@ export default class Validate {
             type: "number",
         },
     });
+    static request = (must = true) => ({
+        matchId: {
+            presence: must,
+            type: "number",
+        },
+        user_send: {
+            presence: must,
+            type: "number",
+        },
+        user_receive: {
+            presence: must,
+            type: "number",
+        },
+        status: {
+            presence: must,
+            type: "string",
+        },
+    });
+    static response = (must = true) => ({
+
+        status: {
+            presence: must,
+            type: "string",
+        },
+    });
 }
