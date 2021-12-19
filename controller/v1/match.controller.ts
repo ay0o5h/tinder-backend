@@ -12,6 +12,7 @@ export default class MatchController {
         let idMatchMusic = [];
         let passionResults = [];
         let userMusicArr = [];
+        let userMatchArr = [];
         let result;
         let keys, values, uniqueArray;
         let finalMatchUserArr = [];
@@ -26,6 +27,7 @@ export default class MatchController {
                     musicCat: "musicFav.musicCat",
                     userPassion: "user.userPassion",
                     passion: "userPassion.passion",
+                    userMatch: "user.userMatch"
 
                 },
             },
@@ -39,15 +41,18 @@ export default class MatchController {
                     musicCat: "musicFav.musicCat",
                     userPassion: "user.userPassion",
                     passion: "userPassion.passion",
+                    userMatch: "user.userMatch"
 
                 },
             },
         })
         user.userPassion.map((u) => userPassionArr.push(u.passion.title));
         user.musicFav.map((u) => userMusicArr.push(u.musicCat.type));
+        user.userMatch.map((u) => userMatchArr.push(u.matchId))
 
         for (let i = 0; i < users.length; i++) {
-            if (users[i].id !== req.user.id) {
+
+            if (users[i].id !== req.user.id && !userMatchArr.includes(users[i].id)) {
                 // check match gender
                 if (users[i].gender === user.gender_Love && users[i].gender_Love === user.gender) idGenderMatch.push(users[i].id);
                 // check match passion
@@ -77,6 +82,7 @@ export default class MatchController {
                     && idMatchMusic.includes(users[i].id)) {
                     finalMatchUserArr.push(users[i].id)
                 }
+
             }
         }
         for (let x of finalMatchUserArr) {

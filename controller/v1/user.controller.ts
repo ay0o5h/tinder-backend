@@ -226,22 +226,8 @@ export default class UserController {
         return okRes(res, { msg: "All good" });
     }
     static async getProfile(req, res): Promise<object> {
-        let isSameGender = 0;
-        let isSamePassion = 0;
-        let isSameMusic = 0;
-        let users = await User.find({
-            join: {
-                alias: "user",
-                leftJoinAndSelect: {
-                    musicFav: "user.musicFav",
-                    musicCat: "musicFav.musicCat",
-                    userPassion: "user.userPassion",
-                    passion: "userPassion.passion",
 
-                },
-            },
-        });
-        if (!users) return errRes(res, `there is no user`);
+
         let user = await User.findOne({
             where: { id: req.user.id },
             join: {
@@ -251,13 +237,14 @@ export default class UserController {
                     musicCat: "musicFav.musicCat",
                     userPassion: "user.userPassion",
                     passion: "userPassion.passion",
+                    userMatch: "user.userMatch"
 
                 },
             },
         });
         if (!user) return errRes(res, `there is no user`);
 
-        return okRes(res, { otherUsers: users, userData: user });
+        return okRes(res, { user });
     }
 
     static async update(req, res): Promise<object> {
