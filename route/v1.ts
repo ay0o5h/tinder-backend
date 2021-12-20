@@ -49,6 +49,8 @@ route.delete("/music-favourit/delete/:id", UserController.deleteMusic)
 route.get("/suggestions", MatchController.suggestions)
 route.post("/request", MatchController.request)
 route.post("/response", MatchController.response)
+route.get("/match", MatchController.getMatch)
+
 
 
 export default route;

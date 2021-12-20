@@ -124,5 +124,19 @@ export default class MatchController {
         await reply.save()
         return okRes(res, { reply });
     }
+    static async getMatch(req, res): Promise<object> {
+        let user = await User.findOne({
+            where: { id: req.user.id },
+            join: {
+                alias: "user",
+                leftJoinAndSelect: {
+                    userMatch: "user.userMatch",
+
+
+                },
+            },
+        })
+        return okRes(res, { user });
+    }
 
 }
